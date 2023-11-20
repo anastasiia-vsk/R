@@ -1,0 +1,300 @@
+---
+title: "Управління даними в R"
+output: html_notebook
+---
+
+### Завдання 1.
+
+Додайте датасет *Orange* в робоче середовище. Проведіть аналіз структури датасету.
+
+```{r}
+# ?Orange
+```
+
+```{r}
+df_orange <- Orange
+head(df_orange)
+```
+
+Створіть нову колонку під назвою *year*, в якій будуть
+
+-   нулі, якщо значення змінної *age* менше 366,
+
+-   одиниці -- *age* в межах від 366 до 731,
+
+-   2 -- якщо *age* більше 731 і менше 1096,
+
+-   3 -- якщо *age* більше 1097 і менше 1462,
+
+-   4 -- якщо *age* більше 1463.
+
+```{r}
+# варіант 1
+
+df_orange$year <- ifelse(df_orange$age < 366, 0,
+                         
+                     ifelse(df_orange$age >= 366 
+                            & df_orange$age <= 731, 1,
+                            
+                            ifelse(df_orange$age > 731 
+                                   & df_orange$age <= 1096, 2,
+                                   
+                                   ifelse(df_orange$age > 1096 
+                                          & df_orange$age <= 1462, 3, 
+                                          
+                                          4))))
+
+
+head(df_orange)
+```
+
+```{r}
+# варіант 2
+df_orange <- within(df_orange,
+                    {
+                      year <- NA
+                      year[age < 366] <- 0
+                      year[age >= 366 & age <= 731] <- 1
+                      year[age > 731 & age <= 1096] <- 2
+                      year[age > 1096 & age <= 1462] <- 3
+                      year[age > 1462] <- 4
+                    })
+
+head(df_orange)
+```
+
+Створіть вектор *circumference_4* і збережіть в ньому значення діаметру дерев (*circumference*) для дерев віком чотири роки (*year*).
+
+```{r}
+circumference_4 <- df_orange$circumference[df_orange$year == 4]
+
+circumference_4
+```
+
+```{r}
+# але так як ми вчили цикли, і у Вас на демонстрації на парі я бачила варіант виконання цього завдання з їх використанням, то теж попрактикувалася:
+
+circumference_4 <- c()
+
+for (i in 1:nrow(df_orange)) 
+  {
+  if (df_orange$year[i] == 4) 
+    {
+    circumference_4 <- append(circumference_4, df_orange$circumference[i])
+    }
+}
+
+circumference_4
+```
+
+### Завдання 2.
+
+Створіть нову змінну *new_var* в даних *mtcars*, яка містить одиниці в рядках, якщо в машині не менше чотирьох карбюраторів (змінна «*carb*») або більше шести циліндрів (змінна «*cyl*»). У рядках, в яких умова не виконується, повинні стояти нулі.
+
+```{r}
+data("mtcars")
+head(mtcars)
+```
+
+```{r}
+# варіант 1
+mtcars$new_var <- ifelse(mtcars$carb >= 4 | mtcars$cyl > 6, 1, 
+                         0)
+
+head(mtcars)
+```
+
+```{r}
+# варіант 2
+for (i in 1:nrow(mtcars)) 
+  {
+  if (mtcars$carb[i] >= 4 || mtcars$cyl[i] > 6) 
+    #
+    {
+    mtcars$new_var[i] <- 1
+  } 
+  else {
+    mtcars$new_var[i] <- 0
+    }
+}
+
+head(mtcars, 10)
+```
+
+```{r}
+# варіант 3
+mtcars <- within(mtcars,
+                 { # без початкового задання 0 всюди працює коректно, 
+                   # new_var <- 0
+                   
+                   # якщо задаю, то замість 0 виводить NA.
+                   
+                   # тому лишила такий варіант
+                      new_var[carb >= 4 | cyl > 6] <- 1
+                    })
+
+head(mtcars)
+```
+
+### Завдання 3.
+
+Для змінної *new_var* з попереднього завдання, використовуючи конструкцію: *if () {} Else {}* зробіть наступне: якщо середнє значення вектора *new_var* більше 0.7, в змінну *result* збережіть *«My mean is great»*, якщо середнє значення *new_var* менше або дорівнює 0.7, то в змінну result збережіть рядок *«My mean is not so great»*.
+
+```{r}
+mean_new_var <- mean(mtcars$new_var)
+
+if (mean_new_var > 0.7) {
+  result <- "My mean is great"
+} else {
+  result <- "My mean is not so great"
+}
+
+result
+print(mean_new_var)
+```
+
+### Завдання 4.
+
+Додайте до датасету *AirPassengers* змінну *good_months* і збережіть в неї число пасажирів тільки в тих місяцях, в яких це число більше, ніж показник попереднього місяця.
+
+```{r}
+data("AirPassengers")
+AirPassengers
+```
+
+```{r}
+good_months <- c()
+index <- 1
+
+for (i in 2: length(AirPassengers)) {
+  if (AirPassengers[i] > AirPassengers[i - 1]) 
+    {
+    good_months[index] <- AirPassengers[i]
+    index <- index + 1
+    }
+}
+
+
+good_months
+```
+
+### Завдання 5.
+
+Створіть *data.frame* у робочому середовищі:
+
+```{r}
+df <- data.frame(var1 = c(11, 21, 31), 
+                 var2 = c(12, 22, 32),
+                 var3 = c(13, 23, 33),
+                 var4 = c(14, 24, 34),
+                 row.names = c("case1", "case2", "case3"))
+df
+```
+
+1)  Виведіть значення var1, var2, var3 для case1.
+
+```{r}
+df_1_1 <- df["case1", c("var1", "var2", "var3")]
+df_1_1
+```
+
+АБО
+
+```{r}
+df_1_2 <- df[c(1), c(1:3)]
+df_1_2
+```
+
+2)  Виведіть значення всіх змінних для case2, які більші за 22.
+
+```{r}
+df_2 <- df["case2", ][, df["case2", ] > 22]
+df_2
+```
+
+3)  Виведіть імена змінних для колонок 1 і 3.
+
+```{r}
+df_3 <- colnames(df)[c(1, 3)]
+df_3
+```
+
+4)  Додайте колонку з іменем *Y* і значеннями -1, 0, 1.
+
+```{r}
+df_4 <- df
+df_4$Y <- c(-1, 0, 1)
+df_4
+```
+
+5)  Видаліть рядок case2.
+
+```{r}
+df_5 <- df[-2, ]
+df_5
+```
+
+6)  Значення другої колонки піднесіть в третій степінь.
+
+```{r}
+df_6 <- df
+df_6$var2 <- df_6$var2^3
+df_6
+```
+
+### Завдання 6.
+
+Напишіть код, який запитує у користувача кількість елементів вектору («*Enter number of elements:*»), зберігає його в змінну *n* і створює вектор заданої довжини, що складається з пропущених значень (*NA*). Далі, якщо індекс елемента парний, то цей елемент замінюється на 1, якщо непарний -- на 0.
+
+```{r}
+n <- as.integer(readline(prompt = "Enter number of elements: "))
+print(n)
+vector <- rep(NA, n)
+print(vector)
+```
+
+```{r}
+for (i in 1:n) 
+  {
+  if (i %% 2 == 0) 
+    {
+    vector[i] <- 1
+    } 
+  else 
+    {
+    vector[i] <- 0
+    }
+}
+
+print(vector)
+```
+
+### Завдання 7.
+
+Напишіть функцію *smart_squares* (), яка приймає на вхід вектор, і якщо він числовий, то повертає вектор з квадратів його елементів, а якщо ні -- повертає вектор з пропущених значень (*NA*) і виводить на екран повідомлення «*Your vector is not numeric*».
+
+```{r}
+smart_squares <- function(input) 
+  {
+  if (is.numeric(input)) 
+    {
+    return(input^2)
+  } 
+  
+  else 
+    {
+    cat("Your vector is not numeric\n")
+    return(rep(NA, length(input)))
+  }
+}
+```
+
+```{r}
+numeric_vector <- c(1, 2, 333, 10, 90)
+smart_squares(numeric_vector)
+```
+
+```{r}
+not_numeric_vector <- c("a", "b", "c")
+smart_squares(not_numeric_vector)
+```

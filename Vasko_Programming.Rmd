@@ -1,0 +1,180 @@
+---
+title: "Програмування в R"
+output: html_notebook
+---
+
+### **Завдання 1.**
+
+Напишіть код, який запитує у користувача його ім'я та прізвище і якщо воно збігається Вашим, виводить на екран *«Hello, [name] [surname], welcome to R! I missed you»*, якщо не збігається, то виводить на екран *«Sorry, R is not available now»*. Мається на увазі, що *R* знає Ваше ім'я.
+
+```{r}
+my_name <- "Anastasiia"
+my_surname = "Vasko"
+```
+
+```{r}
+user_name <- readline("Введіть ваше ім'я (агнлійською): ")
+user_surname <- readline("Введіть ваше прізвище (англійською): ")
+```
+
+```{r}
+if (user_name == my_name && user_surname == my_surname) {
+  cat(paste("Hello, ", user_name, " ", user_surname, ", welcome to R! I missed you", sep = ""))
+} else {
+  cat("Sorry, R is not available now")
+}
+```
+
+### **Завдання 2.**
+
+Напишіть код, який зберігає число, яке ввів користувач з клавіатури (передбачається, що користувач вводить тільки числа, причому в правильному форматі -- як роздільник використовує точку), в змінну *x* і якщо *x* є цілим числом, то виводить на екран повідомлення «*It is an integer*», а якщо *x* не є таким, то виводить «*It is not an integer*».
+
+```{r}
+number <- as.numeric(readline("Введіть число: "))
+print(number)
+
+if (as.integer(number) == as.numeric(number)) {
+  cat("It is an integer\n")
+} else {
+  cat("It is not an integer\n")
+}
+```
+
+### **Завдання 3.**
+
+Напишіть код, який запитує у користувача розмірність матриці (передбачається, що користувач вводить число рядків і стовпців через пробіл), зберігає їх і створює одиничну матрицю заданої розмірності. Якщо неможливо створити одиничну матрицю заданої розмірності, на екран виводиться повідомлення *«Impossible to create an identity matrix with such dimensions»*.
+
+```{r}
+dimensions <- as.integer(strsplit(readline("Введіть розмірність матриці: "), " ")[[1]])
+
+rows <- dimensions[1]
+cols <- dimensions[2]
+
+if (rows > 0 && cols > 0 && rows == cols) {
+  matrix <- diag(1, nrow = rows, ncol = cols)
+  print(matrix)
+  } else {
+    cat("Неможливо створити одиничну матрицю з такими розмірами\n")
+  }
+```
+
+### **Завдання 4.**
+
+Визначити максимальний за модулем від'ємний елемент масиву *B*(10).
+
+```{r}
+B <- sample(-100:100, 10)
+B
+```
+
+```{r}
+max_negative_element <- NULL
+
+for (i in 1:length(B)) {
+  if (B[i] < 0) {
+    if (is.null(max_negative_element) || abs(B[i]) > abs(max_negative_element)) 
+      {
+      max_negative_element <- B[i]
+    }
+  }
+}
+
+if (!is.null(max_negative_element)) {
+  cat("Максимальний за модулем від'ємний елемент: ", max_negative_element, "\n")
+} else {
+  cat("У масиві немає від'ємних елементів\n")
+}
+```
+
+### **Завдання 5.**
+
+Переписати підряд у масив *Y* додатні, а в масив *Z* -- від'ємні елементи масиву *X*(12).
+
+```{r}
+X <- sample(-20:20, 12)
+X
+```
+
+```{r}
+Y <- numeric(0)  
+Z <- numeric(0) 
+
+for (i in 1:length(X)) {
+  if (X[i] > 0) {
+    Y <- c(Y, X[i])
+  } else if (X[i] < 0) {
+    Z <- c(Z, X[i])
+  }
+}
+
+
+cat("Y (додатні): ", Y, "\n")
+cat("Z (від'ємні): ", Z, "\n")
+
+```
+
+### **Завдання 6.**
+
+Визначити суму елементів масиву *N*(20), які кратні трьом. Використати функцію, яка приймає значення *true*, якщо число поділяється на три і *false* в іншому разі. Написати процедуру виводу на екран елементів одновимірного масиву.
+
+```{r}
+N <- sample(1:100, 20)
+N
+```
+
+```{r}
+is_multiple_3 <- function(x) {
+  return(x %% 3 == 0)
+}
+
+sum_multiples <- function(arr) {
+  sum <- 0
+  for (i in 1:length(arr)) {
+    if (is_multiple_3(arr[i])) {
+      sum <- sum + arr[i]
+      print(arr[i])
+    }
+  }
+  cat("Сума елементів, кратних трьом:", sum, "\n")
+}
+
+
+sum_multiples(N)
+```
+
+### **Завдання 7.**
+
+Дано вектори: country = ( Austria, Ghana, Italy, Canada, Egypt, USA, Sweden); сontinent = (America, Africa, Europe); Описати функцію *cont(s)*, яка визначає континент, на якому знаходиться країна *s* і використати її для визначення логічної змінної *t*, яка дорівнює *true*, якщо країни *x* i *y* знаходяться в межах одного континенту і *false*, якщо країни *x* i *y* знаходяться на різних континентах.
+
+```{r}
+cont <- function(country) {
+  continents <- c("America", "Africa", "Europe")
+  if (country %in% c("USA", "Canada")) {
+    return("America")
+  } else if (country %in% c("Ghana", "Egypt")) {
+    return("Africa")
+  } else if (country %in% c("Austria", "Italy", "Sweden")) {
+    return("Europe")
+  } else {
+    return("Unknown")
+  }
+}
+```
+
+```{r}
+# перевірка
+cont("USA")
+cont("Sweden")
+```
+
+```{r}
+check_continent <- function(c1, c2) {
+  ifelse(cont(c1) == cont(c2), t <- TRUE, t <- FALSE)
+}
+```
+
+```{r}
+check_continent("Egypt", "Ghana")
+check_continent("Italy", "Sweden")
+check_continent("Italy", "Canada")
+```

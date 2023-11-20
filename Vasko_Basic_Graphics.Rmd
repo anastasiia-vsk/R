@@ -1,0 +1,212 @@
+---
+title: "Розвідувальна аналітика. Використання базового пакету графіки."
+output: html_notebook
+---
+
+## Графіки
+
+Одразу вирішила подивитися можливі кольори в R()
+
+```{r}
+colors()
+```
+
+### **Завдання 1.**
+
+Відтворіть наступний графік, який складено за даними датасету *women* з базової інсталяції *R.*
+
+```{r}
+women
+```
+
+```{r}
+str(women)
+```
+
+```{r}
+plot(x = women$height, y = women$weight, 
+     main = "American Women - weight vs height", 
+     xlab = "Height", ylab = "Weight", 
+     col = "blue", pch = 19, cex = 1.2)
+```
+
+### **Завдання 2.**
+
+В R є вбудований датасет *Nile*. Цей датасет містить річний потік води в річці Ніл з 1871 до 1971 року. З використанням функції *plot* та її параметрів:
+
+1)  зобразити графік залежності величини річкового потоку за роками;
+
+2)  додати заголовок для графіка: «Nile River Annual Flow», підпис осі x: «Year» і підпис осі y: «Flow»;
+
+3)  обчислити середнє значення річкового потоку додати на графік горизонтальну лінію, яка відображає середній потік за всі роки і підпис «Average Flow» з підрахованим середнім потоком.
+
+```{r}
+Nile
+```
+
+```{r}
+plot(Nile, type = "l", col = "blue", lwd = 2, 
+     main = "Nile River Annual Flow", 
+     xlab = "Year", 
+     ylab = "Flow")
+
+average_flow <- mean(Nile)
+abline(h = average_flow, col = "darkgrey", lty = 2)
+text(1900,1200, average_flow, labels = paste("Average Flow:", round(average_flow, 2)), pos = 4, col = "darkgrey")
+```
+
+### **Завдання 3.**
+
+В датасеті *cars* наведено швидкість і гальмівну відстань. Зобразіть дані на точковому графіку і проведіть аналіз отриманих результатів.
+
+```{r}
+data(cars)
+```
+
+```{r}
+plot(cars$speed, cars$dist, 
+     main = "Залежність гальмівного шляху від швидкості", col.main = "red",
+     xlab = "Швидкість", ylab = "Гальмівний шлях", col.lab = "blue",
+     pch = 16, tck = 1,
+     col = "darkgreen")
+
+abline(lm(dist ~ speed, data = cars), col = "red")
+```
+
+***Бачимо залежність між гальмівним шляхом і швидкістю автомобіля.***
+
+Вирішила додатково обрахувати кореляцію:
+
+```{r}
+cor(cars$speed, cars$dist)
+```
+
+Переконалася, що кореляція існує, значення 0,8 на це вказує.
+
+### **Завдання 4.**
+
+Використайте датасет *rivers* (*R Base*). Створіть графік, який містить зображення річок щодо їх індексу в даних. Додайте підпис осі *Y*: «*Length in miles*». Додайте заголовок червоним кольором у два рядки: «*Length of Major N. American Rivers*». Точки зобразіть зеленим кольором.
+
+```{r}
+rivers
+```
+
+```{r}
+plot(rivers, pch = 16, col = "green", ylab = "Length in miles")
+title(main = "Length of \n Major N. American Rivers", col.main = "red")
+```
+
+## Стовпчикові діаграми та гістограми
+
+### **Завдання 5.**
+
+Створіть вектор з таких чисел:
+
+60 85 72 59 37 75 93 7 98 63 41 90 5 17 97\
+і побудуйте для такого вектору гістограму та стовпчикову діаграму, розмістивши їх в один ряд. В чому буде полягати відмінність?
+
+```{r}
+vector <- c(60, 85, 72, 59, 37, 75, 93, 7, 98, 63, 41, 90, 5, 17, 97)
+vector
+```
+
+```{r}
+par(mfrow=c(1,2))
+
+hist(vector, main="Гістограма", col.main = "green", font.main = 3,
+     xlab="Values", 
+     col= rainbow(length(vector)), border="black")
+
+barplot(vector, main="Стовпчикова діаграма", col.main = "blue", font.main = 3,
+        xlab="Index", ylab="Values", 
+        col= rainbow(length(vector)), border="black")
+```
+
+Різниця між гістограмою та стовпчиковою діаграмою:
+
+-   гістограма відображає розподіл чисел на діапазонах (групує дані, і виводить їх частоту -- кількість значень, що потрапили в інтервал)
+
+-   стовпчикова діаграма відображає окремі значення
+
+### **Завдання 6.**
+
+З допомогою команди *rnorm*(100) згенеруйте 100 випадкових чисел з нормальним розподілом. Створіть дві гістограми з двома різними наборами чисел по 100 елементів з нормального розподілу, використавши команду наведену вище. Чи гістограми будуть однаковими?
+
+```{r}
+data1 <- rnorm(n = 100, mean = 10, sd = 5)
+data2 <- rnorm(n = 100, mean = 10, sd = 5)
+```
+
+```{r}
+par(mfrow=c(1,2))
+
+hist(data1, main="Гістограма 1", breaks = 20, 
+     col="azure", border="black", xlab="Values")
+hist(data2, main="Гістограма 2", breaks = 20, 
+     col="mistyrose", border="black", xlab="Values")
+```
+
+***Ні, гістограми різні, бо ми маємо набір рандомних чисел.***
+
+### **Завдання 7.**
+
+Завантажте дані з файлу *firtree.csv.* Побудуйте стовпчикову діаграму розподілу кількості хвойних дерев у числовому та відсотковому форматі з різними відтінками зеленого кольору.
+
+```{r}
+tree <- read.csv("firtree 1.csv", encoding = "UTF-8", na.strings ="")
+tree <- na.omit(tree)
+tree
+```
+
+```{r}
+par(mfrow=c(1,2))
+
+barplot(table(tree$tree_type), main = "Хвойні дерева", xlab = "Види дерев", ylab = "Частота",
+        col = c("mediumseagreen", "seagreen", "darkgreen", "forestgreen"), 
+        border = "black")
+
+
+percent_tree <- table(tree$tree_type)/sum(table(tree$tree_type))*100
+barplot(percent_tree, main = "Хвойні дерева", xlab = "Види дерев", ylab = "Частота у %",
+        col = c("mediumseagreen", "seagreen", "darkgreen", "forestgreen"), border = "black")
+```
+
+### **Завдання 8.**
+
+Побудуйте гістограму для висоти дерев. Додайте до гістограми заголовок, змініть колір і підпишіть осі координат
+
+```{r}
+hist(tree$height, 
+     main = "Гістограма висоти дерев",
+     xlab = "Висота дерева(в см)",          
+     ylab = "Кількість дерев",       
+     col = "chartreuse",                  
+     border = "black")
+grid()
+```
+
+## Кругові діаграми
+
+### **Завдання 9.**
+
+Побудуйте кругову діаграму розподілу типів хвойних дерев. Змініть кольори діаграми на власні*.*
+
+```{r}
+pie(round(percent_tree, 2), main = "Розподіл типів хвойних дерев", col = c("lightcoral",  "orchid", "pink", "lightblue"))
+```
+
+### **Завдання 10.**
+
+Додайте до кругової діаграми значення розподілу дерев у відсотках*.* Додати легенду до кругової діаграми
+
+```{r}
+percent_tree <- round(percent_tree, 2)
+labels_trees <- paste(percent_tree, "%", sep = " ")
+
+pie(percent_tree, labels = labels_trees, 
+    main = "Розподіл типів хвойних дерев", 
+    col = c("firebrick",  "gold", "deeppink", "dodgerblue"))
+
+legend(x = -2.5, y = 1, cex = 0.8, as.character(unique(tree$tree_type)), 
+       fill = c("firebrick", "deeppink", "dodgerblue", "gold"))
+```

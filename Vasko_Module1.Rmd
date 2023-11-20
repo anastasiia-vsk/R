@@ -1,0 +1,126 @@
+---
+title: "Модульний контроль № 1"
+output: html_notebook
+---
+
+```{r}
+# install.packages("DAAG")
+library(DAAG)
+```
+
+```{r}
+data(hurricNamed)
+hurricNamed
+```
+
+### **Завдання 1.**
+
+Проведіть аналіз структури датасету. Ознайомтеся із довідковою інформацією про зміст полів датасету.
+
+```{r}
+?hurricNamed
+```
+
+```{r}
+rows <- dim(hurricNamed)[1]
+cols <- dim(hurricNamed)[2]
+
+sprintf("Датасет містить %d рядки і %d стовпців", rows, cols)
+```
+
+```{r}
+# також можна було використати nrow() та ncol()
+cat("Кількість рядків: ", nrow(hurricNamed))
+```
+
+```{r}
+cat("Кількість стовпців: ", ncol(hurricNamed))
+```
+
+```{r}
+# переглянула типи даних та зміст полів датасету
+str(hurricNamed)
+```
+
+```{r}
+# подивилася кількість пропущених значень
+count_na <- sum(!complete.cases(hurricNamed))
+cat("Кількість пропущених значень: ", count_na)
+```
+
+### **Завдання 2.**
+
+Виведіть увесь датасет *hurricNamed* на екран*.*
+
+```{r}
+View(hurricNamed)
+```
+
+### **Завдання 3.**
+
+Виведіть на екран перші 10 і останні 10 записів про урагани.
+
+```{r}
+head(hurricNamed, 10)
+```
+
+```{r}
+tail(hurricNamed, 10)
+```
+
+### **Завдання 4.**
+
+Сформувати датасет *hurricNamed_short,* який містить:
+
+1)  назву урагану;
+
+2)  рік;
+
+3)  максимальну швидкість вітру;
+
+4)  величину заподіяних збитків.
+
+```{r}
+hurricNamed_short <- hurricNamed[, c("Name", "Year", "LF.WindsMPH", "BaseDamage")]
+
+head(hurricNamed_short)
+```
+
+### **Завдання 5.**
+
+Упорядкувати датасет *hurricNamed_short* за спаданням максимальної швидкості вітру і вивести на екран упорядкований набір.
+
+```{r}
+hurricNamed_short_ordered <- hurricNamed_short[order(-hurricNamed_short$LF.WindsMPH), ]
+
+hurricNamed_short_ordered
+```
+
+### **Завдання 6.**
+
+Сформувати датасет hurricNamed_short2000, який містить дані з датасету hurricNamed_short про урагани, що вирували після 2000 року.
+
+```{r}
+hurricNamed_short2000 <- hurricNamed_short[hurricNamed_short$Year > 2000, ]
+
+head(hurricNamed_short2000)
+```
+
+### **Завдання 7.**
+
+Експортувати датасет *hurricNamed_short* у текстовий файл *Surname_Modul_1.txt*
+
+```{r}
+write.table(hurricNamed_short, "Vasko_Modul_1.txt", sep = ",")
+```
+
+### **Завдання 8.**
+
+На основі початкового датасету *hurricNamed* створити вектор, що містить кількості жертв ураганів. В якості імен використати імена ураганів з датасету.
+
+```{r}
+vector <- hurricNamed$deaths
+names(vector) <- hurricNamed$Name
+
+print(vector)
+```
